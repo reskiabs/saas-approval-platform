@@ -11,6 +11,6 @@ export type Document = {
   createdBy: UserId;
   status: DocumentStatus;
   currentStep: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 };
