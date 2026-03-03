@@ -1,0 +1,6 @@
+export enum ActivityAction {
+  CREATED = "CREATED",
+  SUBMITTED = "SUBMITTED",
+  APPROVED = "APPROVED",
+  REJECTED = "REJECTED",
+}
