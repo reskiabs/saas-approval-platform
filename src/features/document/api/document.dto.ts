@@ -1,9 +1,5 @@
 import { DocumentStatus } from "@/domain/document";
 
-/**
- * Raw response from backend
- * (simulate real world backend contract)
- */
 export type DocumentResponseDto = {
   id: string;
   title: string;
@@ -16,9 +12,6 @@ export type DocumentResponseDto = {
   updated_at: string;
 };
 
-/**
- * Create payload sent to backend
- */
 export type CreateDocumentRequestDto = {
   title: string;
   description?: string;

@@ -11,8 +11,8 @@ export const documentMapper = {
       createdBy: dto.created_by,
       status: dto.status,
       currentStep: dto.current_step,
-      createdAt: dto.created_at,
-      updatedAt: dto.updated_at,
+      createdAt: new Date(dto.created_at),
+      updatedAt: new Date(dto.updated_at),
     };
   },
 };
