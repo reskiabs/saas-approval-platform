@@ -5,7 +5,7 @@ import { documentKeys } from "../api/document.keys";
 export const useDocument = (id: string) => {
   return useQuery({
     queryKey: documentKeys.detail(id),
-    queryFn: () => documentApi.getDocumentById(id),
+    queryFn: () => documentApi.getById(id),
     enabled: !!id,
   });
 };

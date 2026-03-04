@@ -6,7 +6,7 @@ export const useCreateDocument = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: documentApi.createDocument,
+    mutationFn: documentApi.create,
 
     onSuccess: () => {
       queryClient.invalidateQueries({

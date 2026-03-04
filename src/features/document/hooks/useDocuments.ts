@@ -5,6 +5,6 @@ import { documentKeys } from "../api/document.keys";
 export const useDocuments = () => {
   return useQuery({
     queryKey: documentKeys.lists(),
-    queryFn: documentApi.getDocuments,
+    queryFn: documentApi.getAll,
   });
 };
