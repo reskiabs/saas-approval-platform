@@ -1,3 +1,5 @@
+"use client";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import z from "zod";
@@ -33,6 +35,75 @@ export default function Login() {
             Enter your credentials to continue
           </p>
         </div>
+
+        {/* Form */}
+        <form className="space-y-6" onSubmit={handleSubmit(handleLogin)}>
+          {/* Username */}
+          <div className="space-y-2">
+            <label
+              htmlFor="username"
+              className="text-sm font-medium text-neutral-700"
+            >
+              Username
+            </label>
+
+            <input
+              type="text"
+              id="username"
+              placeholder="Insert your username"
+              autoComplete="off"
+              aria-invalid={errors.username ? "true" : "false"}
+              {...register("username")}
+              className={`w-full rounded-lg border px-4 py-2.5 text-sm outline-none transition-all duration-200
+          ${
+            errors.username
+              ? "border-red-300 bg-red-50 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
+              : "border-neutral-200 focus:border-black focus:ring-2 focus:ring-black/10"
+          }`}
+            />
+
+            {errors.username && (
+              <p className="text-xs text-red-500">{errors.username.message}</p>
+            )}
+          </div>
+
+          {/* Password */}
+          <div className="space-y-2">
+            <label
+              htmlFor="password"
+              className="text-sm font-medium text-neutral-700"
+            >
+              Password
+            </label>
+
+            <input
+              type="password"
+              id="password"
+              placeholder="Insert your password"
+              autoComplete="off"
+              aria-invalid={errors.password ? "true" : "false"}
+              {...register("password")}
+              className={`w-full rounded-lg border px-4 py-2.5 text-sm outline-none transition-all duration-200
+          ${
+            errors.password
+              ? "border-red-300 bg-red-50 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
+              : "border-neutral-200 focus:border-black focus:ring-2 focus:ring-black/10"
+          }`}
+            />
+
+            {errors.password && (
+              <p className="text-xs text-red-500">{errors.password.message}</p>
+            )}
+          </div>
+
+          {/* Button */}
+          <button
+            type="submit"
+            className="w-full rounded-lg bg-black py-2.5 text-sm font-medium text-white transition-all duration-200 hover:bg-neutral-800 active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-neutral-400"
+          >
+            Login
+          </button>
+        </form>
       </div>
     </main>
   );
