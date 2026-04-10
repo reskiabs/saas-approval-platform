@@ -54,7 +54,7 @@ export default function Login() {
               autoComplete="off"
               aria-invalid={errors.username ? "true" : "false"}
               {...register("username")}
-              className={`w-full rounded-lg border px-4 py-2.5 text-sm outline-none transition-all duration-200
+              className={`w-full rounded-lg border px-4 py-2.5 text-sm outline-none text-black transition-all duration-200
           ${
             errors.username
               ? "border-red-300 bg-red-50 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
@@ -83,7 +83,7 @@ export default function Login() {
               autoComplete="off"
               aria-invalid={errors.password ? "true" : "false"}
               {...register("password")}
-              className={`w-full rounded-lg border px-4 py-2.5 text-sm outline-none transition-all duration-200
+              className={`w-full rounded-lg border text-black px-4 py-2.5 text-sm outline-none transition-all duration-200
           ${
             errors.password
               ? "border-red-300 bg-red-50 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
