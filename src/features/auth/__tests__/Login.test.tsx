@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import Login from "../components/ui/Login";
@@ -41,17 +41,17 @@ describe("Login Component", () => {
   });
 
   it("should show error when username is not alphanumeric", async () => {
+    const user = userEvent.setup();
     render(<Login />);
 
-    fireEvent.change(screen.getByLabelText(/username/i), {
-      target: { value: "user@123" },
-    });
+    const usernameInput = screen.getByLabelText(/username/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+    const submitButton = screen.getByRole("button", { name: /login/i });
 
-    fireEvent.change(screen.getByLabelText(/password/i), {
-      target: { value: "123456" },
-    });
+    await user.type(usernameInput, "user@123");
+    await user.type(passwordInput, "123456");
 
-    fireEvent.click(screen.getByRole("button", { name: /login/i }));
+    await user.click(submitButton);
 
     expect(
       await screen.findByText(/username must be alphanumeric/i),
@@ -59,17 +59,17 @@ describe("Login Component", () => {
   });
 
   it("should show error when password less than 6 characters", async () => {
+    const user = userEvent.setup();
     render(<Login />);
 
-    fireEvent.change(screen.getByLabelText(/username/i), {
-      target: { value: "user123" },
-    });
+    const usernameInput = screen.getByLabelText(/username/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+    const submitButton = screen.getByRole("button", { name: /login/i });
 
-    fireEvent.change(screen.getByLabelText(/password/i), {
-      target: { value: "123" },
-    });
+    await user.type(usernameInput, "user123");
+    await user.type(passwordInput, "123");
 
-    fireEvent.click(screen.getByRole("button", { name: /login/i }));
+    await user.click(submitButton);
 
     expect(
       await screen.findByText(/minimum 6 characters/i),
@@ -77,17 +77,17 @@ describe("Login Component", () => {
   });
 
   it("should submit form and redirect on valid input", async () => {
+    const user = userEvent.setup();
     render(<Login />);
 
-    fireEvent.change(screen.getByLabelText(/username/i), {
-      target: { value: "user123" },
-    });
+    const usernameInput = screen.getByLabelText(/username/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+    const submitButton = screen.getByRole("button", { name: /login/i });
 
-    fireEvent.change(screen.getByLabelText(/password/i), {
-      target: { value: "123456" },
-    });
+    await user.type(usernameInput, "user123");
+    await user.type(passwordInput, "123456");
 
-    fireEvent.click(screen.getByRole("button", { name: /login/i }));
+    await user.click(submitButton);
 
     await waitFor(() => {
       expect(pushMock).toHaveBeenCalledWith("/dashboard");
