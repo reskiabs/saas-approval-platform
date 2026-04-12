@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import Login from "../components/ui/Login";
 
@@ -25,9 +26,11 @@ describe("Login Component", () => {
   });
 
   it("should show validation errors when fields are empty", async () => {
+    const user = userEvent.setup();
     render(<Login />);
 
-    fireEvent.click(screen.getByRole("button", { name: /login/i }));
+    const submitButton = screen.getByRole("button", { name: /login/i });
+    await user.click(submitButton);
 
     expect(
       await screen.findByText(/username is required/i),
