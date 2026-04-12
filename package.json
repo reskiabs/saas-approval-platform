@@ -9,9 +9,9 @@
     "lint": "eslint",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "test": "vitest --project unit",
-    "test:watch": "vitest --watch",
+    "test": "vitest",
     "test:ui": "vitest --ui",
+    "test:watch": "vitest --watch",
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
