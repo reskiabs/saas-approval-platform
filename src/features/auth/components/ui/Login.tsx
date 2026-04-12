@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import z from "zod";
 
@@ -14,6 +15,8 @@ const loginSchema = z.object({
 type LoginForm = z.infer<typeof loginSchema>;
 
 export default function Login() {
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -22,7 +25,10 @@ export default function Login() {
     resolver: zodResolver(loginSchema),
   });
 
-  const handleLogin: SubmitHandler<LoginForm> = (data) => {};
+  const handleLogin: SubmitHandler<LoginForm> = (data) => {
+    console.log("data", data);
+    router.push("/dashboard");
+  };
   return (
     <main className="flex min-h-screen items-center justify-center bg-neutral-50 px-6">
       <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-[0_10px_40px_rgba(0,0,0,0.06)]">
@@ -51,8 +57,9 @@ export default function Login() {
               type="text"
               id="username"
               placeholder="Insert your username"
-              autoComplete="off"
-              aria-invalid={errors.username ? "true" : "false"}
+              autoComplete="username"
+              aria-invalid={!!errors.username}
+              aria-describedby={errors.username ? "usernameError" : undefined}
               {...register("username")}
               className={`w-full rounded-lg border px-4 py-2.5 text-sm outline-none text-black transition-all duration-200
           ${
@@ -63,7 +70,13 @@ export default function Login() {
             />
 
             {errors.username && (
-              <p className="text-xs text-red-500">{errors.username.message}</p>
+              <p
+                id="usernameError"
+                className="text-xs text-red-500"
+                aria-live="polite"
+              >
+                {errors.username.message}
+              </p>
             )}
           </div>
 
@@ -81,7 +94,8 @@ export default function Login() {
               id="password"
               placeholder="Insert your password"
               autoComplete="off"
-              aria-invalid={errors.password ? "true" : "false"}
+              aria-invalid={!!errors.password}
+              aria-describedby={errors.password ? "passwordError" : undefined}
               {...register("password")}
               className={`w-full rounded-lg border text-black px-4 py-2.5 text-sm outline-none transition-all duration-200
           ${
@@ -92,7 +106,13 @@ export default function Login() {
             />
 
             {errors.password && (
-              <p className="text-xs text-red-500">{errors.password.message}</p>
+              <p
+                id="passwordError"
+                className="text-xs text-red-500"
+                aria-live="polite"
+              >
+                {errors.password.message}
+              </p>
             )}
           </div>
 

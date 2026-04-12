@@ -1,14 +1,11 @@
-import { AppSidebar } from "@/shared/components/app-sidebar"
-import { ChartAreaInteractive } from "@/shared/components/chart-area-interactive"
-import { DataTable } from "@/shared/components/data-table"
-import { SectionCards } from "@/shared/components/section-cards"
-import { SiteHeader } from "@/shared/components/site-header"
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/shared/components/ui/sidebar"
+import { AppSidebar } from "@/shared/components/app-sidebar";
+import { ChartAreaInteractive } from "@/shared/components/chart-area-interactive";
+import { DataTable } from "@/shared/components/data-table";
+import { SectionCards } from "@/shared/components/section-cards";
+import { SiteHeader } from "@/shared/components/site-header";
+import { SidebarInset, SidebarProvider } from "@/shared/components/ui/sidebar";
 
-import data from "./data.json"
+import data from "./data.json";
 
 export default function Page() {
   return (
@@ -36,5 +33,5 @@ export default function Page() {
         </div>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }
