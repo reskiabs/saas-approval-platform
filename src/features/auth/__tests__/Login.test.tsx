@@ -40,6 +40,32 @@ describe("Login Component", () => {
     ).toBeInTheDocument();
   });
 
+  it("should mark inputs as invalid when validation fails", async () => {
+    const user = userEvent.setup();
+    render(<Login />);
+
+    const submitButton = screen.getByRole("button", { name: /login/i });
+    await user.click(submitButton);
+
+    const usernameInput = screen.getByLabelText(/username/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+
+    expect(usernameInput).toHaveAttribute("aria-invalid", "true");
+    expect(passwordInput).toHaveAttribute("aria-invalid", "true");
+  });
+
+  it("should link error message with input via aria-describedby", async () => {
+    const user = userEvent.setup();
+    render(<Login />);
+
+    const submitButton = screen.getByRole("button", { name: /login/i });
+    await user.click(submitButton);
+
+    const usernameInput = screen.getByLabelText(/username/i);
+
+    expect(usernameInput).toHaveAttribute("aria-describedby", "usernameError");
+  });
+
   it("should show error when username is not alphanumeric", async () => {
     const user = userEvent.setup();
     render(<Login />);
