@@ -7,9 +7,14 @@ import z from "zod";
 
 const loginSchema = z.object({
   username: z
-    .string("Username is required")
+    .string()
+    .min(1, "Username is required")
     .regex(/^[a-zA-Z0-9]+$/, "Username must be alphanumeric"),
-  password: z.string("Password is required").min(6, "Minimum 6 characters"),
+
+  password: z
+    .string()
+    .min(1, "Password is required")
+    .min(6, "Minimum 6 characters"),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;
