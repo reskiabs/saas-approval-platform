@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import Login from "../components/ui/Login";
+import Login from "../components/Login";
 
 // mock next/navigation
 const pushMock = vi.fn();

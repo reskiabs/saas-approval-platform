@@ -30,10 +30,25 @@ export default function Login() {
     resolver: zodResolver(loginSchema),
   });
 
-  const handleLogin: SubmitHandler<LoginForm> = (data) => {
-    console.log("data", data);
+  const handleLogin: SubmitHandler<LoginForm> = async (data) => {
+  const response = await fetch("/api/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  const result = await response.json();
+  console.log("🚀 ~ handleLogin ~ result:", result);
+
+  if (response.ok) {
     router.push("/dashboard");
-  };
+  } else {
+    alert(result.message);
+  }
+};
+
   return (
     <main className="flex min-h-screen items-center justify-center bg-neutral-50 px-6">
       <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-[0_10px_40px_rgba(0,0,0,0.06)]">
