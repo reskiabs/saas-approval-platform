@@ -21,7 +21,7 @@ export function Providers({
           onUnhandledRequest: "bypass",
         });
 
-        console.log("✅ MSW Started");
+        console.log("MSW Started...");
       }
     }
 

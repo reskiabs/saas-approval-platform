@@ -1,53 +1,28 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import z from "zod";
 
-const loginSchema = z.object({
-  username: z
-    .string()
-    .min(1, "Username is required")
-    .regex(/^[a-zA-Z0-9]+$/, "Username must be alphanumeric"),
+import { loginSchema, type LoginFormValues } from "../schemas/login.schema";
+import { useLogin } from "../hooks/useLogin";
 
-  password: z
-    .string()
-    .min(1, "Password is required")
-    .min(6, "Minimum 6 characters"),
-});
-
-type LoginForm = z.infer<typeof loginSchema>;
-
-export default function Login() {
-  const router = useRouter();
+export default function LoginForm() {
+  const { mutate, isPending } = useLogin();
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginForm>({
+  } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
   });
 
-  const handleLogin: SubmitHandler<LoginForm> = async (data) => {
-  const response = await fetch("/api/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-
-  const result = await response.json();
-  console.log("🚀 ~ handleLogin ~ result:", result);
-
-  if (response.ok) {
-    router.push("/dashboard");
-  } else {
-    alert(result.message);
-  }
-};
+  const handleLogin: SubmitHandler<LoginFormValues> = (data) => {
+    mutate(data);
+  };
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-neutral-50 px-6">
@@ -109,21 +84,40 @@ export default function Login() {
               Password
             </label>
 
-            <input
-              type="password"
-              id="password"
-              placeholder="Insert your password"
-              autoComplete="off"
-              aria-invalid={!!errors.password}
-              aria-describedby={errors.password ? "passwordError" : undefined}
-              {...register("password")}
-              className={`w-full rounded-lg border text-black px-4 py-2.5 text-sm outline-none transition-all duration-200
-          ${
-            errors.password
-              ? "border-red-300 bg-red-50 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-              : "border-neutral-200 focus:border-black focus:ring-2 focus:ring-black/10"
-          }`}
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                placeholder="Insert your password"
+                autoComplete="off"
+                aria-invalid={!!errors.password}
+                aria-describedby={
+                  errors.password ? "passwordError" : undefined
+                }
+                {...register("password")}
+                className={`w-full rounded-lg border text-black px-4 py-2.5 pr-11 text-sm outline-none transition-all duration-200
+            ${
+              errors.password
+                ? "border-red-300 bg-red-50 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
+                : "border-neutral-200 focus:border-black focus:ring-2 focus:ring-black/10"
+            }`}
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute inset-y-0 right-3 flex items-center text-neutral-500 hover:text-neutral-700"
+                aria-label={
+                  showPassword ? "Hide password" : "Show password"
+                }
+              >
+                {showPassword ? (
+                  <EyeOff size={18} />
+                ) : (
+                  <Eye size={18} />
+                )}
+              </button>
+            </div>
 
             {errors.password && (
               <p
@@ -139,9 +133,10 @@ export default function Login() {
           {/* Button */}
           <button
             type="submit"
+            disabled={isPending}
             className="w-full rounded-lg bg-black py-2.5 text-sm font-medium text-white transition-all duration-200 hover:bg-neutral-800 active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-neutral-400"
           >
-            Login
+            {isPending ? "Loading..." : "Login"}
           </button>
         </form>
       </div>

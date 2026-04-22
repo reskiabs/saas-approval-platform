@@ -1,9 +1,9 @@
-import Login from "@/features/auth/components/Login";
+import LoginForm from "@/features/auth/components/LoginForm";
 
 export default function Home() {
   return (
     <main className="min-h-screen w-full bg-neutral-50">
-      <Login />
+      <LoginForm />
     </main>
   );
 }
