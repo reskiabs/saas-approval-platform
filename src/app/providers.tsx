@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/shared/lib/queryClient";
+import { Toaster } from "sonner";
 
 export function Providers({
   children,
@@ -31,6 +32,7 @@ export function Providers({
   return (
     <QueryClientProvider client={queryClient}>
       {children}
+      <Toaster />
     </QueryClientProvider>
   );
 }

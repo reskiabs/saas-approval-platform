@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { loginRequest } from "../services/login.service";
+import { toast } from "sonner";
 
 export function useLogin() {
   const router = useRouter();
@@ -15,7 +16,8 @@ export function useLogin() {
     },
 
     onError: (error: Error) => {
-      alert(error.message);
+      // alert(error.message);
+      toast.error(error.message)
     },
   });
 }
