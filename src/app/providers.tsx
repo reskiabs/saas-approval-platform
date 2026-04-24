@@ -1,15 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
-import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/shared/lib/queryClient";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { useEffect } from "react";
 import { Toaster } from "sonner";
 
-export function Providers({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function Providers({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     async function initMocks() {
       if (
@@ -33,6 +30,7 @@ export function Providers({
     <QueryClientProvider client={queryClient}>
       {children}
       <Toaster />
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }
