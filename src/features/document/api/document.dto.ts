@@ -1,4 +1,5 @@
 import { DocumentStatus } from "@/domain/document";
+import { PaginatedResponse } from "@/shared/types/pagination";
 
 export type DocumentResponseDto = {
   id: string;
@@ -18,12 +19,4 @@ export type CreateDocumentRequestDto = {
   file_url: string;
 };
 
-export type DocumentListResponseDto = {
-  data: DocumentResponseDto[];
-  meta: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-};
+export type DocumentListResponseDto = PaginatedResponse<DocumentResponseDto>;
