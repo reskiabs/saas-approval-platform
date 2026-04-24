@@ -17,3 +17,13 @@ export type CreateDocumentRequestDto = {
   description?: string;
   file_url: string;
 };
+
+export type DocumentListResponseDto = {
+  data: DocumentResponseDto[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+};

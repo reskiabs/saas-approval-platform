@@ -1,18 +1,40 @@
 import { Document } from "@/domain/document";
 import { http } from "@/shared/api/http";
-import { CreateDocumentRequestDto, DocumentResponseDto } from "./document.dto";
+import {
+  CreateDocumentRequestDto,
+  DocumentListResponseDto,
+  DocumentResponseDto,
+} from "./document.dto";
 import { documentMapper } from "./document.mapper";
 
-export const documentApi = {
-  async getAll(): Promise<ReadonlyArray<Document>> {
-    const res = await http.get<DocumentResponseDto[]>("/api/documents");
+type GetDocumentsParams = {
+  page?: number;
+  search?: string;
+  status?: string;
+};
 
-    return res.map(documentMapper.toDomain);
+export const documentApi = {
+  async getAll(params?: GetDocumentsParams) {
+    const searchParams = new URLSearchParams();
+
+    if (params?.page) searchParams.set("page", String(params.page));
+    if (params?.search) searchParams.set("search", params.search);
+    if (params?.status) searchParams.set("status", params.status);
+
+    const query = searchParams.toString();
+
+    const url = query ? `/api/documents?${query}` : "/api/documents";
+
+    const res = await http.get<DocumentListResponseDto>(url);
+
+    return {
+      data: res.data.map(documentMapper.toDomain),
+      meta: res.meta,
+    };
   },
 
   async getById(id: string): Promise<Document> {
     const res = await http.get<DocumentResponseDto>(`/api/documents/${id}`);
-
     return documentMapper.toDomain(res);
   },
 
