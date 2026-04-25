@@ -1,9 +1,11 @@
 "use client";
 
+import dayjs from "dayjs";
 import { useDocuments } from "../hooks/useDocuments";
 
 export default function DocumentsPage() {
   const { data, isLoading, isError, refetch } = useDocuments();
+  console.log("🚀 ~ DocumentsPage ~ data:", data);
 
   if (isLoading) {
     return <div className="p-6">Loading documents...</div>;
@@ -52,6 +54,9 @@ export default function DocumentsPage() {
                 Created By
               </th>
               <th scope="col" className="px-4 py-3 text-left">
+                Organization
+              </th>
+              <th scope="col" className="px-4 py-3 text-left">
                 Created At
               </th>
             </tr>
@@ -62,9 +67,10 @@ export default function DocumentsPage() {
               <tr key={doc.id} className="border-b last:border-0">
                 <td className="px-4 py-3">{doc.title}</td>
                 <td className="px-4 py-3">{doc.status}</td>
-                <td className="px-4 py-3">{doc.createdBy}</td>
+                <td className="px-4 py-3">{doc.creatorName}</td>
+                <td className="px-4 py-3">{doc.organizationName}</td>
                 <td className="px-4 py-3">
-                  {doc.createdAt.toLocaleDateString()}
+                  {dayjs(doc.createdAt).format("MMM D, YYYY h:mm A")}
                 </td>
               </tr>
             ))}
