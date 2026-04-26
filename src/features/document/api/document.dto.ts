@@ -43,9 +43,19 @@ export type DocumentResponseDto = {
 };
 
 export type CreateDocumentRequestDto = {
+  organization_id: string;
   title: string;
   description?: string;
+
   file_url: string;
+  file_name?: string;
+  file_size?: number;
+  mime_type?: string;
+
+  created_by: string;
+  assigned_to?: string;
+
+  total_steps: number;
 };
 
 export type DocumentListResponseDto = PaginatedResponse<DocumentResponseDto>;

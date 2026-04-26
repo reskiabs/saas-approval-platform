@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { documentApi } from "../api/document.api";
 import { documentKeys } from "../api/document.keys";
 
-export const useCreateDocument = () => {
+export function useCreateDocument() {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -14,4 +14,4 @@ export const useCreateDocument = () => {
       });
     },
   });
-};
+}

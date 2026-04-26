@@ -86,12 +86,39 @@ export const documentApi = {
   },
 
   async create(payload: CreateDocumentRequestDto): Promise<Document> {
-    const res = await http.post<DocumentResponseDto, CreateDocumentRequestDto>(
-      "/api/documents",
-      payload,
-    );
+    const supabase = createClient();
 
-    return documentMapper.toDomain(res);
+    const { data, error } = await supabase
+      .from("documents")
+      .insert({
+        ...payload,
+        status: "DRAFT",
+        current_step: 0,
+      })
+      .select(
+        `
+      *,
+      creator:profiles!documents_created_by_fkey (
+        id,
+        full_name,
+        role
+      ),
+      assignee:profiles!documents_assigned_to_fkey (
+        id,
+        full_name
+      ),
+      organization:organizations!documents_organization_id_fkey (
+        id,
+        name,
+        slug
+      )
+    `,
+      )
+      .single();
+
+    if (error) throw error;
+
+    return documentMapper.toDomain(data as DocumentResponseDto);
   },
 
   async update(
