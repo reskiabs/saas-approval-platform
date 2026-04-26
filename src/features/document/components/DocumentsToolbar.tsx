@@ -1,5 +1,7 @@
+import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Search } from "lucide-react";
+import Link from "next/link";
 
 type DocumentsToolbarProps = {
   keyword: string;
@@ -11,16 +13,22 @@ export function DocumentsToolbar({
   onKeywordChange,
 }: DocumentsToolbarProps) {
   return (
-    <div className="relative w-full max-w-sm">
-      <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+    <div className="flex items-center justify-between">
+      <div className="relative w-full max-w-sm">
+        <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
 
-      <Input
-        value={keyword}
-        onChange={(e) => onKeywordChange(e.target.value)}
-        placeholder="Search documents..."
-        className="pl-9"
-        aria-label="Search documents"
-      />
+        <Input
+          value={keyword}
+          onChange={(e) => onKeywordChange(e.target.value)}
+          placeholder="Search documents..."
+          className="pl-9"
+          aria-label="Search documents"
+        />
+      </div>
+
+      <Link href="/documents/new">
+        <Button className="ml-auto hover:cursor-pointer">New Document</Button>
+      </Link>
     </div>
   );
 }

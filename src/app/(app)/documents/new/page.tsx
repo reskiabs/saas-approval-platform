@@ -72,12 +72,9 @@ export default function CreateDocumentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background p-6 md:p-8">
+    <div>
       <div className="mx-auto max-w-7xl space-y-6">
         <div className="space-y-2">
-          <p className="text-sm text-muted-foreground">
-            Dashboard / Documents / New
-          </p>
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-semibold tracking-tight">
               Create New Document

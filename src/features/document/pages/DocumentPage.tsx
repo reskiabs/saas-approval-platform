@@ -15,9 +15,11 @@ export default function DocumentsPage() {
   });
 
   return (
-    <div className="space-y-4">
-      <header>
-        <h1 className="text-2xl font-semibold">Documents</h1>
+    <div className="space-y-6">
+      <header className="space-y-2">
+        <div className="flex items-center gap-3">
+          <h1 className="text-3xl font-semibold tracking-tight">Document</h1>
+        </div>
         <p className="text-sm text-muted-foreground">
           Manage and track submitted documents.
         </p>
