@@ -1,4 +1,3 @@
-import DocumentsPage from "@/features/document/pages/DocumentPage";
 import { AppSidebar } from "@/shared/components/app-sidebar";
 import {
   Breadcrumb,
@@ -15,7 +14,7 @@ import {
   SidebarTrigger,
 } from "@/shared/components/ui/sidebar";
 
-export default function Page() {
+export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -42,9 +41,7 @@ export default function Page() {
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <DocumentsPage />
-        </div>
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );
