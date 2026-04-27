@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ApproveLab | Document Approval System",
+  title: "ApproveLab | Approve with Confidence",
   description:
     "ApproveLab is a modern document approval platform built to streamline workflows, accelerate decision-making, and simplify digital approvals with speed, security, and efficiency.",
 };
