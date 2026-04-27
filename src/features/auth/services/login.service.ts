@@ -1,20 +1,25 @@
-export async function loginRequest(payload: {
-  username: string;
+import { createClient } from "@/shared/lib/supabase/client";
+
+export type LoginPayload = {
+  email: string;
   password: string;
-}) {
-  const response = await fetch("/api/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
+};
+
+export async function loginRequest({ email, password }: LoginPayload) {
+  const supabase = createClient();
+
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
   });
 
-  const result = await response.json();
-
-  if (!response.ok) {
-    throw new Error(result.message || "Login failed");
+  if (error) {
+    throw new Error("Invalid username or password");
   }
 
-  return result;
+  if (!data.user) {
+    throw new Error("Unable to sign in");
+  }
+
+  return data.user;
 }

@@ -1,9 +1,9 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
-import { loginRequest } from "../services/login.service";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { loginRequest } from "../services/login.service";
 
 export function useLogin() {
   const router = useRouter();
@@ -12,12 +12,13 @@ export function useLogin() {
     mutationFn: loginRequest,
 
     onSuccess: () => {
+      toast.success("Welcome back");
       router.push("/dashboard");
     },
 
     onError: (error: Error) => {
       // alert(error.message);
-      toast.error(error.message)
+      toast.error(error.message);
     },
   });
 }

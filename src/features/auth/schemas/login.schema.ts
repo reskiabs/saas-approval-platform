@@ -1,10 +1,19 @@
 import z from "zod";
 
 export const loginSchema = z.object({
-  username: z
+  email: z
     .string()
-    .min(1, "Username is required")
-    .regex(/^[a-zA-Z0-9]+$/, "Username must be alphanumeric"),
+    .trim()
+    .toLowerCase()
+    .min(1, "Email is required")
+    .email("Invalid email")
+    .refine(
+      (val) =>
+        val.endsWith(".com") || val.endsWith(".co.id") || val.endsWith(".demo"),
+      {
+        message: "Domain must be .com, .co.id, or .demo",
+      },
+    ),
 
   password: z
     .string()

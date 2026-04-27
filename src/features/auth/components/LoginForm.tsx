@@ -5,10 +5,8 @@ import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 
-import { loginSchema, type LoginFormValues } from "../schemas/login.schema";
 import { useLogin } from "../hooks/useLogin";
-import { Button } from "@/shared/components/ui/button";
-import { toast } from "sonner";
+import { loginSchema, type LoginFormValues } from "../schemas/login.schema";
 
 export default function LoginForm() {
   const { mutate, isPending } = useLogin();
@@ -54,25 +52,25 @@ export default function LoginForm() {
               type="text"
               id="username"
               placeholder="Insert your username"
-              autoComplete="username"
-              aria-invalid={!!errors.username}
-              aria-describedby={errors.username ? "usernameError" : undefined}
-              {...register("username")}
+              autoComplete="email"
+              aria-invalid={!!errors.email}
+              aria-describedby={errors.email ? "usernameError" : undefined}
+              {...register("email")}
               className={`w-full rounded-lg border px-4 py-2.5 text-sm outline-none text-black transition-all duration-200
           ${
-            errors.username
+            errors.email
               ? "border-red-300 bg-red-50 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
               : "border-neutral-200 focus:border-black focus:ring-2 focus:ring-black/10"
           }`}
             />
 
-            {errors.username && (
+            {errors.email && (
               <p
                 id="usernameError"
                 className="text-xs text-red-500"
                 aria-live="polite"
               >
-                {errors.username.message}
+                {errors.email.message}
               </p>
             )}
           </div>
@@ -93,9 +91,7 @@ export default function LoginForm() {
                 placeholder="Insert your password"
                 autoComplete="off"
                 aria-invalid={!!errors.password}
-                aria-describedby={
-                  errors.password ? "passwordError" : undefined
-                }
+                aria-describedby={errors.password ? "passwordError" : undefined}
                 {...register("password")}
                 className={`w-full rounded-lg border text-black px-4 py-2.5 pr-11 text-sm outline-none transition-all duration-200
             ${
@@ -109,15 +105,9 @@ export default function LoginForm() {
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
                 className="absolute inset-y-0 right-3 flex items-center text-neutral-500 hover:text-neutral-700"
-                aria-label={
-                  showPassword ? "Hide password" : "Show password"
-                }
+                aria-label={showPassword ? "Hide password" : "Show password"}
               >
-                {showPassword ? (
-                  <EyeOff size={18} />
-                ) : (
-                  <Eye size={18} />
-                )}
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
 
