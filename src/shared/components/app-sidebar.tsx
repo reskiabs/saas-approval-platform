@@ -1,6 +1,5 @@
-"use client"
+"use client";
 
-import * as React from "react"
 import {
   AudioWaveform,
   BookOpen,
@@ -12,19 +11,22 @@ import {
   PieChart,
   Settings2,
   SquareTerminal,
-} from "lucide-react"
+} from "lucide-react";
+import * as React from "react";
 
-import { NavMain } from "@/shared/components/nav-main"
-import { NavProjects } from "@/shared/components/nav-projects"
-import { NavUser } from "@/shared/components/nav-user"
-import { TeamSwitcher } from "@/shared/components/team-switcher"
+import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
+import { useMemberships } from "@/features/auth/hooks/useMemberships";
+import { NavMain } from "@/shared/components/nav-main";
+import { NavProjects } from "@/shared/components/nav-projects";
+import { NavUser } from "@/shared/components/nav-user";
+import { TeamSwitcher } from "@/shared/components/team-switcher";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/shared/components/ui/sidebar"
+} from "@/shared/components/ui/sidebar";
 
 // This is sample data.
 const data = {
@@ -154,9 +156,12 @@ const data = {
       icon: Map,
     },
   ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { data: user } = useCurrentUser();
+  const { data: membersihips } = useMemberships();
+  console.log("🚀 ~ AppSidebar ~ membersihips:", membersihips);
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -166,10 +171,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={data.navMain} />
         <NavProjects projects={data.projects} />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
+      <SidebarFooter>{user && <NavUser user={user} />}</SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }
