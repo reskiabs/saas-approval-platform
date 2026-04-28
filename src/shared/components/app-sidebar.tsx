@@ -4,6 +4,7 @@ import {
   AudioWaveform,
   BookOpen,
   Bot,
+  Building2,
   Command,
   Frame,
   GalleryVerticalEnd,
@@ -158,14 +159,28 @@ const data = {
   ],
 };
 
+const organizationLogoMap: Record<string, React.ElementType> = {
+  acme: GalleryVerticalEnd,
+  "nusantara-finance": AudioWaveform,
+  "global-logistics": Command,
+};
+
+const getLogo = (slug: string) => organizationLogoMap[slug] ?? Building2;
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: user } = useCurrentUser();
-  const { data: membersihips } = useMemberships();
-  console.log("🚀 ~ AppSidebar ~ membersihips:", membersihips);
+  const { data: memberships } = useMemberships();
+
+  const teams =
+    memberships?.map((m) => ({
+      name: m.organizationName,
+      logo: getLogo(m.organizationSlug),
+      role: m.role,
+    })) ?? [];
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        {memberships && <TeamSwitcher teams={teams} />}
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
