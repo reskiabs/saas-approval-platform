@@ -18,6 +18,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/shared/components/ui/sidebar";
+import { toTitleCase } from "../utils/to-title-case";
 
 export function TeamSwitcher({
   teams,
@@ -49,7 +50,9 @@ export function TeamSwitcher({
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{activeTeam.name}</span>
-                <span className="truncate text-xs">{activeTeam.role}</span>
+                <span className="truncate text-xs text-muted-foreground">
+                  {toTitleCase(activeTeam.role)}
+                </span>
               </div>
               <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>

@@ -28,6 +28,8 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/shared/components/ui/sidebar";
+import { NavUserSkeleton } from "./NavUserSkeleton";
+import { TeamSwitcherSkeleton } from "./TeamSwitcherSkeleton";
 
 // This is sample data.
 const data = {
@@ -168,8 +170,9 @@ const organizationLogoMap: Record<string, React.ElementType> = {
 const getLogo = (slug: string) => organizationLogoMap[slug] ?? Building2;
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { data: user } = useCurrentUser();
-  const { data: memberships } = useMemberships();
+  const { data: user, isLoading: isUserLoading } = useCurrentUser();
+  const { data: memberships, isLoading: isMembershipLoading } =
+    useMemberships();
 
   const teams =
     memberships?.map((m) => ({
@@ -180,13 +183,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        {memberships && <TeamSwitcher teams={teams} />}
+        {isMembershipLoading ? (
+          <TeamSwitcherSkeleton />
+        ) : (
+          <TeamSwitcher teams={teams} />
+        )}
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
         <NavProjects projects={data.projects} />
       </SidebarContent>
-      <SidebarFooter>{user && <NavUser user={user} />}</SidebarFooter>
+      <SidebarFooter>
+        {isUserLoading ? <NavUserSkeleton /> : user && <NavUser user={user} />}
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
