@@ -1,4 +1,4 @@
-import { createClient } from "@/shared/lib/supabase/client";
+import { createClient } from "@/shared/lib/supabase/server";
 
 export type LoginPayload = {
   email: string;
@@ -6,9 +6,9 @@ export type LoginPayload = {
 };
 
 export async function loginRequest({ email, password }: LoginPayload) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
-  const { data, error } = await supabase.auth.signInWithPassword({
+  const { error, data } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
