@@ -29,6 +29,12 @@ export default function LoginForm() {
       <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-[0_10px_40px_rgba(0,0,0,0.06)]">
         {/* Title */}
         <div className="mb-8 text-center">
+          {/* <Image
+            src="/logo.png"
+            width={500}
+            height={100}
+            alt="Picture of the author"
+          /> */}
           <h2 className="text-2xl font-semibold tracking-tight text-neutral-900">
             Sign in to your account
           </h2>
