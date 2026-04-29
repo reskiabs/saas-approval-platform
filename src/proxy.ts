@@ -3,9 +3,7 @@ import { NextResponse } from "next/server";
 
 function isAuthenticated(request: NextRequest) {
   const accessToken = request.cookies.get("sb-access-token");
-  console.log("🚀 ~ isAuthenticated ~ accessToken:", accessToken);
   const refreshToken = request.cookies.get("sb-refresh-token");
-  console.log("🚀 ~ isAuthenticated ~ refreshToken:", refreshToken);
 
   return !!(accessToken || refreshToken);
 }
@@ -14,7 +12,6 @@ export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const isLoggedIn = isAuthenticated(request);
-  console.log("🚀 ~ proxy ~ isLoggedIn:", isLoggedIn);
 
   // route groups
   const isAuthPage = pathname.startsWith("/");
