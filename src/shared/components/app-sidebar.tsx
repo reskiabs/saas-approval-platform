@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import * as React from "react";
 
+import { useActiveOrganization } from "@/features/auth/hooks/useActiveOrganization";
 import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
 import { useLogout } from "@/features/auth/hooks/useLogout";
 import { useMemberships } from "@/features/auth/hooks/useMemberships";
@@ -175,9 +176,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: memberships, isLoading: isMembershipLoading } =
     useMemberships();
   const { mutate: logout, isPending: isLogoutPending } = useLogout();
+  const { activeOrganization, setActiveOrganization } = useActiveOrganization();
 
   const teams =
     memberships?.map((m) => ({
+      id: m.organizationId,
       name: m.organizationName,
       logo: getLogo(m.organizationSlug),
       role: m.role,
@@ -188,7 +191,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {isMembershipLoading ? (
           <TeamSwitcherSkeleton />
         ) : (
-          <TeamSwitcher teams={teams} />
+          <TeamSwitcher
+            teams={teams}
+            activeTeamId={activeOrganization?.organizationId}
+            onSelectTeam={setActiveOrganization}
+          />
         )}
       </SidebarHeader>
       <SidebarContent>

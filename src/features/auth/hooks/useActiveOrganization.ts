@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { useMemberships } from "./useMemberships";
 
 const STORAGE_KEY = "active-org-id";
@@ -8,33 +8,25 @@ const STORAGE_KEY = "active-org-id";
 export function useActiveOrganization() {
   const { data: memberships, isLoading } = useMemberships();
 
-  const [activeOrgId, setActiveOrgId] = useState<string | null>(null);
+  const [storedOrgId, setStoredOrgId] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem(STORAGE_KEY);
+  });
 
-  // Load from localStorage
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) setActiveOrgId(stored);
-  }, []);
+  const activeOrganization = useMemo(() => {
+    if (!memberships || memberships.length === 0) return undefined;
 
-  // Initialize default
-  useEffect(() => {
-    if (!memberships || memberships.length === 0) return;
-
-    // if no active selected yet
-    if (!activeOrgId) {
-      const defaultOrg = memberships.find((m) => m.isDefault) ?? memberships[0];
-
-      setActiveOrgId(defaultOrg.organizationId);
-      localStorage.setItem(STORAGE_KEY, defaultOrg.organizationId);
+    // 1. dari storage
+    if (storedOrgId) {
+      const found = memberships.find((m) => m.organizationId === storedOrgId);
+      if (found) return found;
     }
-  }, [memberships, activeOrgId]);
 
-  const activeOrganization = memberships?.find(
-    (m) => m.organizationId === activeOrgId,
-  );
+    return memberships.find((m) => m.isDefault) ?? memberships[0];
+  }, [memberships, storedOrgId]);
 
   const setActiveOrganization = (orgId: string) => {
-    setActiveOrgId(orgId);
+    setStoredOrgId(orgId);
     localStorage.setItem(STORAGE_KEY, orgId);
   };
 
