@@ -22,7 +22,7 @@ export function proxy(request: NextRequest) {
   }
 
   if (isLoggedIn && (isAuthPage || isPublicPage)) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/documents", request.url));
   }
 
   return NextResponse.next();

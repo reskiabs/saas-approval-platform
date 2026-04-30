@@ -31,12 +31,16 @@ import getInitials from "../utils/get-initials";
 
 export function NavUser({
   user,
+  onLogout,
+  isLogoutPending = false,
 }: {
   user: {
     name: string;
     email: string;
     avatar: string;
   };
+  onLogout: () => void;
+  isLogoutPending?: boolean;
 }) {
   const { isMobile } = useSidebar();
 
@@ -105,9 +109,9 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={onLogout}>
               <LogOut />
-              Log out
+              {isLogoutPending ? "Logging Out..." : "Log Out"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

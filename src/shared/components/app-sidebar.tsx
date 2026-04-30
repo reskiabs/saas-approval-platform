@@ -16,6 +16,7 @@ import {
 import * as React from "react";
 
 import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
+import { useLogout } from "@/features/auth/hooks/useLogout";
 import { useMemberships } from "@/features/auth/hooks/useMemberships";
 import { NavMain } from "@/shared/components/nav-main";
 import { NavProjects } from "@/shared/components/nav-projects";
@@ -173,6 +174,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const { data: memberships, isLoading: isMembershipLoading } =
     useMemberships();
+  const { mutate: logout, isPending: isLogoutPending } = useLogout();
 
   const teams =
     memberships?.map((m) => ({
@@ -194,7 +196,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
-        {isUserLoading ? <NavUserSkeleton /> : user && <NavUser user={user} />}
+        {isUserLoading ? (
+          <NavUserSkeleton />
+        ) : (
+          user && (
+            <NavUser
+              onLogout={() => logout()}
+              isLogoutPending={isLogoutPending}
+              user={user}
+            />
+          )
+        )}
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
