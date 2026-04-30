@@ -13,7 +13,9 @@ export function useLogin() {
 
     onSuccess: () => {
       toast.success("Welcome back");
-      router.push("/documents");
+      setTimeout(() => {
+        router.push("/documents");
+      }, 100);
     },
 
     onError: (error: Error) => {

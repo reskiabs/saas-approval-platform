@@ -1,11 +1,9 @@
-import type { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 
 function isAuthenticated(request: NextRequest) {
-  const accessToken = request.cookies.get("sb-access-token");
-  const refreshToken = request.cookies.get("sb-refresh-token");
+  const cookies = request.cookies.getAll();
 
-  return !!(accessToken || refreshToken);
+  return cookies.some((cookie) => cookie.name.includes("auth-token"));
 }
 
 export function proxy(request: NextRequest) {
@@ -13,17 +11,17 @@ export function proxy(request: NextRequest) {
 
   const isLoggedIn = isAuthenticated(request);
 
-  // route groups
-  const isAuthPage = pathname.startsWith("/");
-  const isProtectedPage = pathname.startsWith("/dashboard");
+  const isPublicPage = pathname === "/";
+  const isAuthPage = pathname === "/login";
 
-  // 1. user belum login → akses protected
+  const isProtectedPage =
+    pathname.startsWith("/dashboard") || pathname.startsWith("/documents");
+
   if (!isLoggedIn && isProtectedPage) {
-    return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // 2. user sudah login → akses login page
-  if (isLoggedIn && isAuthPage) {
+  if (isLoggedIn && (isAuthPage || isPublicPage)) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
@@ -31,5 +29,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/dashboard/:path*"],
+  matcher: ["/", "/login", "/dashboard/:path*", "/documents/:path*"],
 };
