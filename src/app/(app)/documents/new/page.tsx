@@ -18,7 +18,6 @@ import {
 } from "@/shared/components/ui/card";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
-import { Progress } from "@/shared/components/ui/progress";
 import {
   Select,
   SelectContent,
@@ -29,6 +28,8 @@ import {
 import { Separator } from "@/shared/components/ui/separator";
 import { Textarea } from "@/shared/components/ui/textarea";
 
+import { useActiveOrganization } from "@/features/auth/hooks/useActiveOrganization";
+import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
 import { FileText, ShieldCheck, Upload } from "lucide-react";
 
 const ACCEPTED_TYPES = [
@@ -85,6 +86,8 @@ export default function CreateDocumentPage() {
   const router = useRouter();
 
   const { mutateAsync, isPending } = useCreateDocument();
+  const { data: user } = useCurrentUser();
+  const { activeOrganization } = useActiveOrganization();
 
   const {
     register,
@@ -115,8 +118,8 @@ export default function CreateDocumentPage() {
     const file = values.file instanceof FileList ? values.file[0] : undefined;
 
     await mutateAsync({
-      organization_id: "22b24f8b-899a-4a70-865f-d846f8c5fea4",
-      created_by: "ec315426-6df5-4113-b7ac-e0e5ec0e0ead",
+      organization_id: activeOrganization?.organizationId ?? "",
+      created_by: user?.id ?? "",
 
       assigned_to: values.assignedTo,
 
@@ -283,16 +286,22 @@ export default function CreateDocumentPage() {
             </CardHeader>
 
             <CardContent className="space-y-4">
-              <div className="rounded-2xl border border-dashed p-8">
+              <div
+                className="relative rounded-2xl border border-dashed p-8 transition hover:bg-muted/40 focus-within:ring-2 focus-within:ring-primary/20"
+                aria-busy={busy}
+              >
                 <div className="text-center">
                   <Upload className="mx-auto mb-3 h-8 w-8 text-muted-foreground" />
 
-                  <Label htmlFor="file" className="cursor-pointer font-medium">
+                  <Label
+                    htmlFor="file"
+                    className="cursor-pointer font-medium underline-offset-4 hover:underline"
+                  >
                     Choose file to upload
                   </Label>
 
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Keyboard accessible file picker.
+                    or drag & drop (coming soon)
                   </p>
                 </div>
 
@@ -300,40 +309,69 @@ export default function CreateDocumentPage() {
                   id="file"
                   type="file"
                   accept=".pdf,.doc,.docx"
-                  className="mt-4"
+                  className="sr-only"
                   aria-required="true"
                   aria-invalid={!!errors.file}
                   aria-describedby={
                     errors.file ? "file-error file-help" : "file-help"
                   }
-                  {...register("file")}
+                  {...register("file", {
+                    onChange: (e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleFileUpload(file);
+                    },
+                  })}
                 />
+
+                {busy && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl bg-background/80 backdrop-blur-sm">
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-muted border-t-primary" />
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      Uploading file...
+                    </p>
+                  </div>
+                )}
 
                 <p
                   id="file-help"
-                  className="mt-2 text-xs text-muted-foreground"
+                  className="mt-4 text-center text-xs text-muted-foreground"
                 >
                   Accepted formats: PDF, DOC, DOCX.
                 </p>
 
-                {currentFile && (
-                  <p className="mt-2 text-sm font-medium">
-                    Selected: {currentFile.name}
-                  </p>
+                {currentFile && !busy && (
+                  <div className="mt-4 flex items-center justify-between rounded-lg border p-3">
+                    <div className="flex flex-col text-left">
+                      <span className="text-sm font-medium">
+                        {currentFile.name}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {(currentFile.size / 1024).toFixed(1)} KB
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setUploadedFile(null);
+                      }}
+                      className="text-xs text-muted-foreground hover:text-foreground"
+                    >
+                      Replace
+                    </button>
+                  </div>
                 )}
 
                 {errors.file && (
                   <p
                     id="file-error"
                     role="alert"
-                    className="mt-2 text-xs text-destructive"
+                    className="mt-3 text-xs text-destructive text-center"
                   >
                     {errors.file.message as string}
                   </p>
                 )}
               </div>
-
-              {busy && <Progress value={70} aria-label="Upload progress" />}
             </CardContent>
           </Card>
 
