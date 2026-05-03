@@ -33,6 +33,7 @@ import { Textarea } from "@/shared/components/ui/textarea";
 import { useActiveOrganization } from "@/features/auth/hooks/useActiveOrganization";
 import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
 import { useOrganizationMembers } from "@/features/auth/hooks/useOrganizationMembers";
+import { createClient } from "@/shared/lib/supabase/client";
 import { FileText, ShieldCheck, Upload } from "lucide-react";
 
 const ACCEPTED_TYPES = [
@@ -119,8 +120,38 @@ export default function CreateDocumentPage() {
       : null;
 
   async function onSubmit(values: FormValues) {
+    const supabase = createClient();
+
     const file = values.file instanceof FileList ? values.file[0] : undefined;
 
+    if (!file) return;
+
+    // ✅ generate unique filename
+    const fileExt = file.name.split(".").pop();
+    const fileName = `${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2)}.${fileExt}`;
+
+    const filePath = `${activeOrganization?.organizationId}/${fileName}`;
+
+    // ✅ upload ke supabase storage
+    const { error: uploadError } = await supabase.storage
+      .from("documents")
+      .upload(filePath, file);
+
+    if (uploadError) {
+      console.error(uploadError);
+      alert("Failed to upload file");
+      return;
+    }
+
+    // ✅ ambil public url
+    const { data } = supabase.storage.from("documents").getPublicUrl(filePath);
+
+    const publicUrl = data.publicUrl;
+    console.log("🚀 ~ onSubmit ~ publicUrl:", publicUrl);
+
+    // ✅ simpan ke DB
     await mutateAsync({
       organization_id: activeOrganization?.organizationId ?? "",
       created_by: user?.id ?? "",
@@ -130,10 +161,10 @@ export default function CreateDocumentPage() {
       title: values.title,
       description: values.description,
 
-      file_url: `/uploads/${file?.name ?? "document.pdf"}`,
-      file_name: file?.name,
-      file_size: file?.size,
-      mime_type: file?.type,
+      file_url: publicUrl,
+      file_name: file.name,
+      file_size: file.size,
+      mime_type: file.type,
 
       total_steps: 3,
     });
@@ -440,12 +471,12 @@ export default function CreateDocumentPage() {
 
               <div className="flex justify-between gap-4">
                 <span>Creator</span>
-                <span>Daniel Prasetyo</span>
+                <span>{user?.name}</span>
               </div>
 
               <div className="flex justify-between gap-4">
                 <span>Organization</span>
-                <span>Acme Corporation</span>
+                <span>{activeOrganization?.organizationName}</span>
               </div>
 
               <Separator />
