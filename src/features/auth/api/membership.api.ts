@@ -25,4 +25,26 @@ export const membershipApi = {
 
     return data ?? [];
   },
+
+  async getMembersByOrganizationId(orgId: string) {
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from("organization_members")
+      .select(
+        `
+        role,
+        user:profiles (
+          id,
+          full_name,
+          avatar_url
+        )
+      `,
+      )
+      .eq("organization_id", orgId);
+
+    if (error) throw error;
+
+    return data ?? [];
+  },
 };

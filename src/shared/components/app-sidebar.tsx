@@ -185,6 +185,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       logo: getLogo(m.organizationSlug),
       role: m.role,
     })) ?? [];
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>

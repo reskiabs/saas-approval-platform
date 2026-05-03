@@ -21,7 +21,9 @@ import { Label } from "@/shared/components/ui/label";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
@@ -30,6 +32,7 @@ import { Textarea } from "@/shared/components/ui/textarea";
 
 import { useActiveOrganization } from "@/features/auth/hooks/useActiveOrganization";
 import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
+import { useOrganizationMembers } from "@/features/auth/hooks/useOrganizationMembers";
 import { FileText, ShieldCheck, Upload } from "lucide-react";
 
 const ACCEPTED_TYPES = [
@@ -87,6 +90,8 @@ export default function CreateDocumentPage() {
 
   const { mutateAsync, isPending } = useCreateDocument();
   const { data: user } = useCurrentUser();
+  const { data: members } = useOrganizationMembers();
+  console.log("🚀 ~ CreateDocumentPage ~ members:", members);
   const { activeOrganization } = useActiveOrganization();
 
   const {
@@ -101,7 +106,7 @@ export default function CreateDocumentPage() {
     defaultValues: {
       title: "",
       description: "",
-      assignedTo: "a78acf39-bbcd-40aa-ab50-83027f92b32b",
+      assignedTo: "",
     },
   });
 
@@ -318,7 +323,6 @@ export default function CreateDocumentPage() {
                   {...register("file", {
                     onChange: (e) => {
                       const file = e.target.files?.[0];
-                      if (file) handleFileUpload(file);
                     },
                   })}
                 />
@@ -352,9 +356,7 @@ export default function CreateDocumentPage() {
 
                     <button
                       type="button"
-                      onClick={() => {
-                        setUploadedFile(null);
-                      }}
+                      onClick={() => {}}
                       className="text-xs text-muted-foreground hover:text-foreground"
                     >
                       Replace
@@ -391,26 +393,22 @@ export default function CreateDocumentPage() {
                 name="assignedTo"
                 control={control}
                 render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger
-                      id="assignedTo"
-                      aria-invalid={!!errors.assignedTo}
-                    >
-                      <SelectValue />
+                  <Select onValueChange={field.onChange}>
+                    <SelectTrigger className="w-full max-w-48">
+                      <SelectValue placeholder="Select a user" />
                     </SelectTrigger>
-
                     <SelectContent>
-                      <SelectItem value="a78acf39-bbcd-40aa-ab50-83027f92b32b">
-                        Michelle Tan
-                      </SelectItem>
-
-                      <SelectItem value="891f262e-213a-465e-a172-27292fc32eb4">
-                        Budi Santoso
-                      </SelectItem>
-
-                      <SelectItem value="4b206aec-2f7d-4a09-b290-5040ea46649f">
-                        Sarah Putri
-                      </SelectItem>
+                      <SelectGroup>
+                        <SelectLabel>Assign To</SelectLabel>
+                        {members?.map((member) => (
+                          <SelectItem
+                            key={member?.id}
+                            value={member?.id as string}
+                          >
+                            {member?.name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
                     </SelectContent>
                   </Select>
                 )}

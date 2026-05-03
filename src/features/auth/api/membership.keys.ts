@@ -4,4 +4,7 @@ export const membershipKeys = {
   lists: () => [...membershipKeys.all, "list"] as const,
 
   list: (userId?: string) => [...membershipKeys.lists(), userId] as const,
+
+  members: (orgId?: string) =>
+    [...membershipKeys.all, "members", orgId] as const,
 };

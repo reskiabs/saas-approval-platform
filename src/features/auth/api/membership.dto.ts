@@ -7,3 +7,12 @@ export type MembershipDto = {
     slug: string;
   } | null;
 };
+
+export type OrganizationMemberDto = {
+  role: string;
+  user: {
+    id: string;
+    full_name: string;
+    avatar_url?: string | null;
+  } | null;
+};
