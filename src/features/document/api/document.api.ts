@@ -8,10 +8,10 @@ import { documentMapper } from "./document.mapper";
 const PAGE_SIZE = 10;
 
 export const documentApi = {
-  async getAll(params?: GetDocumentsParams) {
+  async getAll(params: GetDocumentsParams) {
     const supabase = createClient();
 
-    const page = params?.page ?? 1;
+    const page = params.page ?? 1;
     const from = (page - 1) * PAGE_SIZE;
     const to = from + PAGE_SIZE - 1;
 
@@ -19,33 +19,34 @@ export const documentApi = {
       .from("documents")
       .select(
         `
-    *,
-    creator:profiles!documents_created_by_fkey (
-      id,
-      full_name,
-      role
-    ),
-    assignee:profiles!documents_assigned_to_fkey (
-      id,
-      full_name
-    ),
-    organization:organizations!documents_organization_id_fkey (
-      id,
-      name,
-      slug
-    )
-  `,
+      *,
+      creator:profiles!documents_created_by_fkey (
+        id,
+        full_name,
+        role
+      ),
+      assignee:profiles!documents_assigned_to_fkey (
+        id,
+        full_name
+      ),
+      organization:organizations!documents_organization_id_fkey (
+        id,
+        name,
+        slug
+      )
+    `,
         { count: "exact" },
       )
+      .eq("organization_id", params.organizationId)
       .is("deleted_at", null)
       .order("created_at", { ascending: false })
       .range(from, to);
 
-    if (params?.search) {
+    if (params.search) {
       query = query.ilike("title", `%${params.search}%`);
     }
 
-    if (params?.status) {
+    if (params.status) {
       query = query.eq("status", params.status);
     }
 

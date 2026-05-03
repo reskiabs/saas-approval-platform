@@ -91,7 +91,6 @@ export default function CreateDocumentPage() {
   const { mutateAsync, isPending } = useCreateDocument();
   const { data: user } = useCurrentUser();
   const { data: members } = useOrganizationMembers();
-  console.log("🚀 ~ CreateDocumentPage ~ members:", members);
   const { activeOrganization } = useActiveOrganization();
 
   const {
