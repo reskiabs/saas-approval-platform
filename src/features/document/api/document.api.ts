@@ -1,14 +1,9 @@
 import { Document } from "@/domain/document";
 import { http } from "@/shared/api/http";
 import { createClient } from "@/shared/lib/supabase/client";
+import { GetDocumentsParams } from "../types/documents";
 import { CreateDocumentRequestDto, DocumentResponseDto } from "./document.dto";
 import { documentMapper } from "./document.mapper";
-
-type GetDocumentsParams = {
-  page?: number;
-  search?: string;
-  status?: string;
-};
 
 const PAGE_SIZE = 10;
 
