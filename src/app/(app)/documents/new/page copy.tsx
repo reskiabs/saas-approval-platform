@@ -1,7 +1,11 @@
 "use client";
 
-import { Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
+
+import { useCreateDocument } from "@/features/document/hooks/useCreateDocument";
 
 import { Badge } from "@/shared/components/ui/badge/badge";
 import { Button } from "@/shared/components/ui/button";
@@ -26,9 +30,12 @@ import {
 import { Separator } from "@/shared/components/ui/separator";
 import { Textarea } from "@/shared/components/ui/textarea";
 
+import { useActiveOrganization } from "@/features/auth/hooks/useActiveOrganization";
+import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
 import { useOrganizationMembers } from "@/features/auth/hooks/useOrganizationMembers";
-import { useCreateDocumentForm } from "@/features/document/hooks/useCreateDocumentForm";
+import { createClient } from "@/shared/lib/supabase/client";
 import { FileText, ShieldCheck, Upload } from "lucide-react";
+import { toast } from "sonner";
 
 const ACCEPTED_TYPES = [
   "application/pdf",
@@ -81,10 +88,89 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 export default function CreateDocumentPage() {
-  const { form, onSubmit, isPending, currentFile } = useCreateDocumentForm();
-  const { data: members } = useOrganizationMembers();
+  const router = useRouter();
 
-  const busy = form.formState.isSubmitting || isPending;
+  const { mutateAsync, isPending } = useCreateDocument();
+  const { data: user } = useCurrentUser();
+  const { data: members } = useOrganizationMembers();
+  const { activeOrganization } = useActiveOrganization();
+
+  const {
+    register,
+    control,
+    watch,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<FormValues>({
+    resolver: zodResolver(schema),
+    mode: "onBlur",
+    defaultValues: {
+      title: "",
+      description: "",
+      assignedTo: "",
+    },
+  });
+
+  const title = watch("title") ?? "";
+  const description = watch("description") ?? "";
+  const selectedFile = watch("file");
+
+  const currentFile =
+    selectedFile instanceof FileList && selectedFile.length > 0
+      ? selectedFile[0]
+      : null;
+
+  async function onSubmit(values: FormValues) {
+    const supabase = createClient();
+
+    const file = values.file instanceof FileList ? values.file[0] : undefined;
+
+    if (!file) return;
+
+    // ✅ generate unique filename
+    const fileExt = file.name.split(".").pop();
+    const fileName = `${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2)}.${fileExt}`;
+
+    const filePath = `${activeOrganization?.organizationId}/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("documents")
+      .upload(filePath, file);
+
+    if (uploadError) {
+      toast.error("Failed to upload document");
+      console.error(uploadError);
+      return;
+    }
+
+    const { data } = supabase.storage.from("documents").getPublicUrl(filePath);
+
+    const publicUrl = data.publicUrl;
+
+    // ✅ simpan ke DB
+    await mutateAsync({
+      organization_id: activeOrganization?.organizationId ?? "",
+      created_by: user?.id ?? "",
+
+      assigned_to: values.assignedTo,
+
+      title: values.title,
+      description: values.description,
+
+      file_url: publicUrl,
+      file_name: file.name,
+      file_size: file.size,
+      mime_type: file.type,
+
+      total_steps: 3,
+    });
+
+    router.push("/documents");
+  }
+
+  const busy = isSubmitting || isPending;
 
   return (
     <main>
@@ -113,7 +199,7 @@ export default function CreateDocumentPage() {
       <form
         id="main-form"
         noValidate
-        onSubmit={onSubmit}
+        onSubmit={handleSubmit(onSubmit)}
         aria-describedby="form-status"
         className="grid gap-6 lg:grid-cols-12"
       >
